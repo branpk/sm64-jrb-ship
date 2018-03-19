@@ -175,10 +175,10 @@ void addSurface(Surface *tri, bool dynamic) {
 
 
 /** 80382B7C(J) */
-Surface *readSurfaceData(s16 *vertexData, s16 **arg1) {
-  s16 offset1 = 3 * *(*arg1 + 0);
-  s16 offset2 = 3 * *(*arg1 + 1);
-  s16 offset3 = 3 * *(*arg1 + 2);
+Surface *readSurfaceData(s16 *vertexData, s16 **indices) {
+  s16 offset1 = 3 * *(*indices + 0);
+  s16 offset2 = 3 * *(*indices + 1);
+  s16 offset3 = 3 * *(*indices + 2);
 
   s32 x1 = *(vertexData + offset1 + 0);
   s32 y1 = *(vertexData + offset1 + 1);
@@ -329,7 +329,7 @@ void readObjectCollisionVertices(Object *curObj, s16 **data, s16 *vertexData) {
     (s16) curObj->displayAngle.yaw,
     (s16) curObj->displayAngle.roll,
   };
-  matrixFromTransAndRot(curObj, &curObj->pos, &rot);
+  matrixFromTransAndRot(&curObj->v21C, &curObj->pos, &rot);
 
   Mtxf m;
   applyObjectScale(curObj, &m, transform);
@@ -338,7 +338,7 @@ void readObjectCollisionVertices(Object *curObj, s16 **data, s16 *vertexData) {
     s16 vx = *(*data)++;
     s16 vy = *(*data)++;
     s16 vz = *(*data)++;
-    
+
     *vertexData++ = (s16) (m[0][0]*vx + m[1][0]*vy + m[2][0]*vz + m[3][0]);
     *vertexData++ = (s16) (m[0][1]*vx + m[1][1]*vy + m[2][1]*vz + m[3][1]);
     *vertexData++ = (s16) (m[0][2]*vx + m[1][2]*vy + m[2][2]*vz + m[3][2]);
@@ -362,7 +362,7 @@ void loadObjColModelFromVertexData(
   //   val6 = 5;
   // else
     val6 = 0;
-  
+
   for (s32 i = 0; i < numTris; i++) {
     Surface *tri = readSurfaceData(vertexData, data);
 
