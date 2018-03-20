@@ -99,6 +99,7 @@ struct SpotNode {
 
 
 SpotNode *spotsByIndex[0x100];
+SpotNode *pedrosByIndex[0x100];
 
 
 SpotNode *findVolatileSpotsForSurface(Surface *s, SurfaceHeightMap *m0) {
@@ -185,6 +186,60 @@ void computeAllVolatileSpots(void) {
   for (int idx = 0; idx < 0x100; idx++) {
     SpotNode *spots = findVolatileSpots(idx);
     spotsByIndex[idx] = spots;
+
+    int count = 0;
+    while (spots != NULL) {
+      count++;
+      spots = spots->next;
+    }
+    printf("Index %d: %d\n", idx, count);
+  }
+}
+
+
+SpotNode *findPedroSpots(s32 index) {
+  initDynamicPartition();
+  updateJrbShipAfloatIndex(ship, index);
+  loadObjectCollisionModel(ship);
+
+  SurfaceHeightMap *maps = buildHeightMaps();
+
+  SpotNode *spots = NULL;
+
+  for (int i = 0; i < surfacesAllocated; i++) {
+    Surface *s = &surfacePool[i];
+    if (classifySurface(s) != 'f') continue;
+    SurfaceHeightMap *m = &maps[i];
+
+    for (s16 z = m->z0; z <= m->z1; z++) {
+      for (s16 x = m->x0; x <= m->x1; x++) {
+        f32 y = map_get(m, x, z);
+        if (y == map_none) continue;
+
+        Surface *ceil;
+        f32 ch = findCeil((v3f) { x, y + 80.0f, z }, &ceil);
+
+        if (!(ch - y > 160.0f)) {
+          SpotNode *spot = (SpotNode *) malloc(sizeof(SpotNode));
+          spot->x = x;
+          spot->z = z;
+          spot->y = y;
+          spot->next = spots;
+          spots = spot;
+        }
+      }
+    }
+  }
+
+  return spots;
+}
+
+
+void computeAllPedroSpots(void) {
+  printf("Computing Pedro spots\n");
+  for (int idx = 0; idx < 0x100; idx++) {
+    SpotNode *spots = findPedroSpots(idx);
+    pedrosByIndex[idx] = spots;
 
     int count = 0;
     while (spots != NULL) {
@@ -291,18 +346,19 @@ void renderShipSurfaces(void) {
 }
 
 
-void renderVolatileSpots(void) {
+void renderSpots(void) {
   int index = ((u32) ship->v0F4 / 0x100) % 0x100;
-  SpotNode *spots = spotsByIndex[index];
+  SpotNode *spots = pedrosByIndex[index];
   if (spots == NULL) return;
 
   glColor3f(1, 1, 1);
   while (spots != NULL) {
+    f32 size = 4;
     glBegin(GL_TRIANGLE_STRIP);
     glVertex3f(spots->x, spots->y, spots->z);
-    glVertex3f(spots->x + 1, spots->y, spots->z);
-    glVertex3f(spots->x, spots->y, spots->z + 1);
-    glVertex3f(spots->x + 1, spots->y, spots->z + 1);
+    glVertex3f(spots->x + size, spots->y, spots->z);
+    glVertex3f(spots->x, spots->y, spots->z + size);
+    glVertex3f(spots->x + size, spots->y, spots->z + size);
     glEnd();
 
     spots = spots->next;
@@ -321,7 +377,7 @@ void render(GLFWwindow *window) {
   glTranslatef(-camera.pos.x, -camera.pos.y, -camera.pos.z);
 
   renderShipSurfaces();
-  renderVolatileSpots();
+  renderSpots();
 
   glfwSwapBuffers(window);
   glfwPollEvents();
@@ -331,7 +387,8 @@ void render(GLFWwindow *window) {
 int main(void) {
   initJrbShipAfloat(ship);
   initStaticPartition();
-  computeAllVolatileSpots();  
+  // computeAllVolatileSpots();
+  computeAllPedroSpots();
 
   GLFWwindow *window = openWindow();
 
