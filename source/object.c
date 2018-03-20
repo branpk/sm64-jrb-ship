@@ -105,6 +105,21 @@ void updateJrbShipAfloat(Object *curObj) {
 }
 
 
+void updateJrbShipAfloatIndex(Object *curObj, s32 idx) {
+  s16 startPitch = (s16) curObj->displayAngle.pitch;
+  s16 startRoll = (s16) curObj->displayAngle.roll;
+  // p802A3470();
+  
+  curObj->v0F4 = idx * 0x100;
+
+  curObj->displayAngle.pitch = (s32) (1024.0f * sins(curObj->v0F4));
+  curObj->displayAngle.roll = (s32) (1024.0f * sins(curObj->v0F8));
+  
+  curObj->platformRotation.pitch = curObj->displayAngle.pitch - startPitch;
+  curObj->platformRotation.roll = curObj->displayAngle.roll - startRoll;
+}
+
+
 static s16 jrbShipModel[] = {
   0x0040,0x004f,0xfd9b,0x02cd,0xffd0,0xfd34,0x0466,0xffa5,
   0xfd34,0x02cd,0xffd0,0x02cd,0x0466,0xffa5,0xfd9b,0x0466,

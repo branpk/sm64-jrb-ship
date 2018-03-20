@@ -104,22 +104,6 @@ void addSurfaceToPartition(
 }
 
 
-/** 8038283C(J) */
-s16 min3(s16 t1, s16 t2, s16 t3) {
-  if (t2 < t1) t1 = t2;
-  if (t3 < t1) t1 = t3;
-  return t1;
-}
-
-
-/** 8038289C(J) */
-s16 max3(s16 t1, s16 t2, s16 t3) {
-  if (t2 > t1) t1 = t2;
-  if (t3 > t1) t1 = t3;
-  return t1;
-}
-
-
 /** 803828FC(J) */
 s16 lowerPartitionCellIdx(s16 t) {
   t += 0x2000;
@@ -625,6 +609,7 @@ Surface *findTriFromListBelow(
 {
   while (triangles != NULL) {
     Surface *tri = triangles->head;
+    triangles = triangles->tail;
 
     s32 x1 = tri->vertex1.x;
     s32 z1 = tri->vertex1.z;
@@ -653,8 +638,6 @@ Surface *findTriFromListBelow(
       *pheight = height;
       return tri;
     }
-
-    triangles = triangles->tail;
   }
 
   return NULL;
@@ -708,6 +691,16 @@ f32 findFloor(v3f pos, Surface **pfloor) {
   *pfloor = floor;
   // numFindFloorCalls += 1;
   return height;
+}
+
+
+char classifySurface(Surface *s) {
+  if (s->normal.y > 0.01)
+    return 'f';
+  else if (s->normal.y < -0.01)
+    return 'c';
+  else
+    return 'w';
 }
 
 

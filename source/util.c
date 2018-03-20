@@ -153,6 +153,20 @@ s32 randomUnit() {
 }
 
 
+s16 min3(s16 t1, s16 t2, s16 t3) {
+  if (t2 < t1) t1 = t2;
+  if (t3 < t1) t1 = t3;
+  return t1;
+}
+
+
+s16 max3(s16 t1, s16 t2, s16 t3) {
+  if (t2 > t1) t1 = t2;
+  if (t3 > t1) t1 = t3;
+  return t1;
+}
+
+
 u32 sineTableRaw[0x1400] = {
   0x00000000,0x3AC90FD5,0x3B490FC6,0x3B96CBC1,0x3BC90F88,0x3BFB5330,0x3C16CB58,
   0x3C2FED02,0x3C490E90,0x3C622FFF,0x3C7B514B,0x3C8A3938,0x3C96C9B6,0x3CA35A1C,

@@ -58,6 +58,8 @@ f32 incTowardAsymF(f32 speed, f32 target, f32 posDelta, f32 negDelta);
 bool incTowardSymFP(f32 *x, f32 target, f32 delta);
 u16 randomU16(void);
 s32 randomUnit();
+s16 min3(s16 t1, s16 t2, s16 t3);
+s16 max3(s16 t1, s16 t2, s16 t3);
 
 
 extern u32 sineTableRaw[0x1400];

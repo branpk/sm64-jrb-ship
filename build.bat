@@ -15,4 +15,4 @@ gcc ^
   -fwrapv ^
   -fno-strict-aliasing ^
   -IC:\Dev\GLFW\include ^
-  -o build/ship.exe
+  -o ship.exe

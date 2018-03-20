@@ -74,6 +74,7 @@ f32 findFloor(v3f pos, Surface **pfloor);
 f32 findCeil(v3f pos, Surface **pceil);
 s32 findWallCols(CollisionData *data);
 
+char classifySurface(Surface *s);
 bool getFloorHeight(Surface *tri, s16 x, s16 z, f32 *pheight);
 bool getCeilHeight(Surface *tri, s16 x, s16 z, f32 *pheight);
 

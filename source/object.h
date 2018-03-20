@@ -27,6 +27,7 @@ void applyPlatformDisplacement(v3f *p, v3h *marioFaceAngle, Object *plat);
 
 void initJrbShipAfloat(Object *o);
 void updateJrbShipAfloat(Object *curObj);
+void updateJrbShipAfloatIndex(Object *curObj, s32 idx);
 
 
 #endif
